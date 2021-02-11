@@ -16,13 +16,13 @@ const GlobalStyles = createGlobalStyle`
     --black: #393939;
     --grey: #3A3A3A;
     --lightGrey: #e1e1e1;
-    --offWhite: $ededed;
+    --offWhite: #ededed;
     --maxWidth: 1000px;
     --bs: 0 12px 24px 0 rgba(0,0,0,0.09);
     box-sizing: border-box;
   }
 
-  *, *:::before, *:after {
+  *, *:before, *:after {
     box-sizing: inherit;
   }
 
@@ -54,7 +54,7 @@ const InnerStyles = styled.div`
   padding: 2rem;
 `;
 
-export default function Page({ children, cool }) {
+export default function Page({ children }) {
   return (
     <div>
       <GlobalStyles />
