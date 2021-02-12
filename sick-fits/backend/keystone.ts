@@ -2,6 +2,10 @@ import 'dotenv/config';
 import { createAuth } from '@keystone-next/auth';
 import { config, createSchema } from '@keystone-next/keystone/schema';
 import { User } from './Schemas/User';
+import {
+  withItemData,
+  statelessSessions,
+} from '@keystone-next/keystone/session';
 
 const databaseURL =
   process.env.DATABASE_URL || 'mongodb://localhost/keystone-sickfits-tutorial';
@@ -13,7 +17,7 @@ const sessionConfig = {
 
 const { withAuth } = createAuth({
   listKey: 'User',
-  identiftyField: 'email',
+  identityField: 'email',
   secretField: 'password',
   initFirstItem: {
     fields: ['name', 'email', 'password'],
@@ -21,26 +25,32 @@ const { withAuth } = createAuth({
   },
 });
 
-export default config({
-  // @ts-ignore
-  server: {
-    cors: {
-      origin: [process.env.FRONTEND_URL],
-      credentials: true,
+export default withAuth(
+  config({
+    // @ts-ignore
+    server: {
+      cors: {
+        origin: [process.env.FRONTEND_URL],
+        credentials: true,
+      },
     },
-  },
-  db: {
-    adapter: 'mongoose',
-    url: databaseURL,
-    // TODO: Add data seeding here
-  },
-  lists: createSchema({
-    // Schema items go in here
-    User,
-  }),
-  ui: {
-    // TODO: change this for rules
-    isAccessAllowed: () => true,
-  },
-  // TODO: Add session values here
-});
+    db: {
+      adapter: 'mongoose',
+      url: databaseURL,
+      // TODO: Add data seeding here
+    },
+    lists: createSchema({
+      // Schema items go in here
+      User,
+    }),
+    ui: {
+      // show ui only for people who pass this test
+      isAccessAllowed: ({ session }) => {
+        return session?.data;
+      },
+    },
+    session: withItemData(statelessSessions(sessionConfig), {
+      User: 'id',
+    }),
+  })
+);
