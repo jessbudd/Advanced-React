@@ -6,6 +6,7 @@ import {
   withItemData,
   statelessSessions,
 } from '@keystone-next/keystone/session';
+import { Product } from './schemas/Product';
 
 const databaseURL =
   process.env.DATABASE_URL || 'mongodb://localhost/keystone-sickfits-tutorial';
@@ -42,6 +43,7 @@ export default withAuth(
     lists: createSchema({
       // Schema items go in here
       User,
+      Product,
     }),
     ui: {
       // show ui only for people who pass this test
@@ -50,6 +52,7 @@ export default withAuth(
       },
     },
     session: withItemData(statelessSessions(sessionConfig), {
+      // GraphQL query
       User: 'id',
     }),
   })
